@@ -34,15 +34,24 @@ def test_encode_decode(test_input):
     '''Verify that decoding an encoded string returns original string'''
     assert(mycrypt.decode(mycrypt.encode(test_input))) == test_input
 
+@pytest.mark.parametrize("invalid_input", ['@', '$', '^'])
+def test_invalid_special_characters(invalid_input):
+    '''Special characters not in the allowed set should raise ValueError'''
+    with pytest.raises(ValueError):
+        mycrypt.encode(invalid_input)
 
-@pytest.mark.parametrize("invalid_input", ['+','åäö'])
+@pytest.mark.parametrize("invalid_input", ['+','åäö','1'*1001, 'â'])
 def test_invalid_char(invalid_input):
     '''Invalid characters should result in ValueError'''
     with pytest.raises(ValueError):
         mycrypt.encode(invalid_input)
 
+def test_empty_string():
+    '''Empty string should raise ValueError'''
+    with pytest.raises(ValueError):
+        mycrypt.encode('')
 
-@pytest.mark.parametrize("invalid_input", [])
+@pytest.mark.parametrize("invalid_input", [3, 3.5, True, [1], (1), {1},{'a':1}, None])
 def test_invalid_types(invalid_input):
     '''Invalid parameter types should raise TypeError'''
     with pytest.raises(TypeError):
